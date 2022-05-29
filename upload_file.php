@@ -38,12 +38,13 @@ else
 		}
 
 		// check file size '5MB'
-		if($fileSize < 5000000){
+		if($fileSize < 5000000)
+		{
 			$fileContent = translit(file_get_contents($tempPath));
 			save_file($upload_path . $fileName, $fileContent);
-			//move_uploaded_file($tempPath, $upload_path . $fileName); // move file from system temporary path to our upload folder path
 		}
-		else{
+		else
+		{
 			$errorMSG = json_encode(array("message" => "Sorry, your file is too large, please upload 5 MB size", "status" => false));
 			echo $errorMSG;
 		}
@@ -58,7 +59,13 @@ else
 // if no error caused, continue ....
 if(!isset($errorMSG))
 {
-	$query =  mysqli_query($conn,'INSERT into tbl_image (name) VALUES("'.$fileName.'")');
+	//writing info to db
+	date_default_timezone_set('Russia/Moscow');
+	$date = date("Y-m-d H:i:s");
+	$ip = $_SERVER['REMOTE_ADDR'];
+	$query = mysqli_query($conn,"INSERT into tbl_log VALUES('$ip', '$fileName', '$date')");
+
+
 	echo json_encode(array("message" => "Image Uploaded Successfully", "status" => true, "translited_message" => $fileContent));
 }
 
